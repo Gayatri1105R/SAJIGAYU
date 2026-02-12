@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Letter</title>
+
+<style>
+body, html {
+    margin: 0; padding: 0;
+    height: 100%; width: 100%;
+    display: flex; justify-content: center; align-items: center;
+    flex-direction: column;
+    font-family: 'Times New Roman', serif;
+    overflow: hidden; position: relative;
+    background: linear-gradient(270deg, #f8e1f4, #d7f0fa, #ffe4e1, #e0ffff);
+    background-size: 800% 800%;
+    animation: gradientBG 20s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+canvas {
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 0;
+}
+
+#letter {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    height: 400px;
+    padding: 25px;
+    border-radius: 15px;
+    font-size: 1.2em;
+    color: #000;
+    line-height: 1.6;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    background: rgba(255,255,255,0.85);
+    overflow-y: auto;
+    white-space: pre-wrap;
+    z-index: 1;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 25px;
+    background: #d63384;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1em;
+    cursor: pointer;
+    z-index: 1;
+    display: none;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #c2185b;
+    transform: scale(1.05);
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="hearts"></canvas>
+<div id="letter"></div>
+<button id="nextBtn">Next: Thank You 💖</button>
+
+<script>
+
+const letterText = `Dear Sajii,
+
+First time temple la unga kitta pesa romba bayama irundhuchu 🥺. Actually “No” sollanum nu dhaan prepare pannitu vandhen. But after speaking with you, I just couldn’t say no. The way you approached me… and neenga pakka romba handsome ah irundheenga 😌✨… that moment itself I felt something special for you, Sajii 🤍
+
+First time car la front seat la ukkandhu ponadhum romba happy ah irundhuchu 💫. Unexpected ah neenga kudutha rose 🌹… it really made my day special.
+
+8/2/26 – our ring ceremony 💍✨ – will always be one of the most memorable days in our life. First time ungala formal dress la paatha… sema cute ah, manly ah irundheenga 🤍🔥. The way you proposed to me on the stage… it’s still fresh in my eyes 🥹💖.
+
+First kiss on my hand 💋 made my heart skip a beat 💓.
+
+Apram neenga car la kelambitinga… ungala vitu iruka manase varala. I missed you a lot 🤍🥺.
+
+Ungala sikiram marriage panikanum… namma two cute kidoos oda jolly ah vazhanum… that's my biggest wish in my life 🤍
+
+WAITING FOR THIS MOMENT 💫
+
+With all my heart,
+Urs Gayu 💝`;
+
+let i = 0;
+const speed = 35;
+const letterDiv = document.getElementById('letter');
+const nextBtn = document.getElementById('nextBtn');
+
+function typeWriter() {
+    if (i < letterText.length) {
+        letterDiv.innerHTML += letterText.charAt(i);
+        i++;
+        setTimeout(typeWriter, speed);
+    } else {
+        nextBtn.style.display = "inline-block";
+    }
+}
+
+typeWriter();
+
+// Button click navigation
+nextBtn.addEventListener("click", function() {
+    window.location.href = "thankyou.html";
+});
+
+
+// 💖 Heart Shape Falling Animation
+const canvas = document.getElementById('hearts');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let hearts = [];
+
+function Heart() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 15 + 10;
+    this.speedY = Math.random() * 1 + 0.5;
+    this.opacity = Math.random() * 0.5 + 0.3;
+}
+
+Heart.prototype.draw = function() {
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = "#ff69b4";
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y);
+    ctx.bezierCurveTo(this.x + this.size/2, this.y - this.size/2,
+                      this.x + this.size, this.y + this.size/3,
+                      this.x, this.y + this.size);
+    ctx.bezierCurveTo(this.x - this.size, this.y + this.size/3,
+                      this.x - this.size/2, this.y - this.size/2,
+                      this.x, this.y);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+};
+
+Heart.prototype.update = function() {
+    this.y += this.speedY;
+    if (this.y > canvas.height) {
+        this.y = -this.size;
+        this.x = Math.random() * canvas.width;
+    }
+    this.draw();
+};
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (hearts.length < 30) hearts.push(new Heart());
+    hearts.forEach(h => h.update());
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+</script>
+
+</body>
+</html>
