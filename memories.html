@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Our Memories</title>
+<style>
+body, html {
+    margin: 0; padding: 0; height: 100%; width: 100%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    font-family: 'Times New Roman', Times, serif;
+    overflow: hidden; position: relative;
+    background: linear-gradient(270deg, #f8e1f4, #d7f0fa, #ffe4e1, #e0ffff);
+    background-size: 800% 800%; animation: gradientBG 20s ease infinite;
+}
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+canvas {
+    position: absolute; top: 0; left: 0; z-index: 0;
+}
+#slideshow {
+    position: relative; width: 90%; max-width: 350px; aspect-ratio: 3/4;
+    overflow: hidden; border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 1;
+}
+.slide {
+    width: 100%; height: 100%;
+    object-fit: cover; border-radius: 20px;
+    transition: opacity 1s ease;
+}
+.caption {
+    margin-top: 10px;
+    color: #6f42c1; font-size: 1.2em; text-align: center;
+    max-width: 90%; line-height: 1.4;
+}
+#nextLoveLetter, #pauseBtn {
+    margin-top: 15px; padding: 10px 20px;
+    background: #d63384; color: white; border: none;
+    border-radius: 30px; font-size: 1em;
+    cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1; transition: background 0.3s, transform 0.2s;
+    display: none;
+}
+#nextLoveLetter:hover, #pauseBtn:hover {
+    background: #c2185b; transform: scale(1.05);
+}
+#tapOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); color: white;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 2em; text-align: center; z-index: 9999;
+    cursor: pointer; flex-direction: column;
+}
+</style>
+</head>
+<body>
+
+<canvas id="hearts"></canvas>
+<audio id="bgm" src="audio/vasegara.mp3" loop></audio>
+
+<div id="tapOverlay">
+    <div>💖 Tap to Start 💖<br>
+    <span style="font-size: 0.6em;">(Music will play & slideshow will begin)</span></div>
+</div>
+
+<div id="slideshow">
+    <img id="photo" src="image/photo1.jpeg" class="slide" alt="Memory">
+</div>
+<div class="caption" id="caption">It started with a rose… 🌹❤️</div>
+
+<button id="pauseBtn">⏸ Pause</button>
+<button id="nextLoveLetter" onclick="window.location.href='loveletter.html'">Next: Love Letter</button>
+
+<script>
+const bgm=document.getElementById("bgm");
+const overlay=document.getElementById("tapOverlay");
+const photo=document.getElementById("photo");
+const caption=document.getElementById("caption");
+const nextBtn=document.getElementById("nextLoveLetter");
+const pauseBtn=document.getElementById("pauseBtn");
+
+const photos=[
+ "image/photo1.jpeg","image/photo2.jpeg","image/photo3.jpeg","image/photo4.jpeg","image/photo5.jpeg",
+ "image/photo6.jpeg","image/photo7.jpeg","image/photo8.jpeg","image/photo9.jpeg","image/photo10.jpeg"
+];
+const captions=[
+ "It started with a rose… 🌹❤️",
+ "The start of something quietly beautiful💫",
+ "Quietly stealing my heart🌹",
+ "Cute, and completely mine 💫",
+ "The moment he bent, my world stood still🤍",
+ "With our cutest Maa & Baa.” 🤍✨",
+ "Mr.Handsome💙",
+ "A kiss filled with love… and a little nervous heart🤍",
+ "🎶 That moment on your shoulder… my soul just melts 🎶",
+ "💖Our new family🤍💖"
+];
+
+let current=0,isPlaying=true,interval;
+
+overlay.addEventListener("click",()=>{
+ bgm.play();
+ overlay.style.display="none";
+ interval=setInterval(nextPhoto,4000);
+ pauseBtn.style.display="inline-block";
+});
+
+pauseBtn.addEventListener("click",()=>{
+ if(isPlaying){clearInterval(interval);pauseBtn.textContent="▶️ Play";}
+ else{interval=setInterval(nextPhoto,4000);pauseBtn.textContent="⏸ Pause";}
+ isPlaying=!isPlaying;
+});
+
+function nextPhoto(){
+ current++;
+ if(current<photos.length){
+   photo.style.opacity=0;
+   setTimeout(()=>{
+     photo.src=photos[current];
+     caption.textContent=captions[current];
+     photo.style.opacity=1;
+   },500);
+ }else{
+   clearInterval(interval);
+   pauseBtn.style.display="none";
+   nextBtn.style.display="inline-block";
+ }
+}
+
+// hearts animation
+const canvas=document.getElementById('hearts');
+const ctx=canvas.getContext('2d');
+canvas.width=innerWidth;canvas.height=innerHeight;
+let hearts=[];
+function Heart(){
+ this.x=Math.random()*canvas.width;
+ this.y=Math.random()*canvas.height;
+ this.size=Math.random()*20+10;
+ this.speedY=Math.random()*0.5+0.5;
+ this.opacity=Math.random()*0.5+0.3;
+ this.color=["#ff69b4","#ff1493","#ff6ec7","#ffb6c1"][Math.floor(Math.random()*4)];
+}
+Heart.prototype.draw=function(){
+ ctx.globalAlpha=this.opacity;
+ ctx.fillStyle=this.color;
+ ctx.beginPath();
+ ctx.moveTo(this.x,this.y);
+ ctx.bezierCurveTo(this.x+this.size/2,this.y-this.size/2,this.x+this.size,this.y+this.size/3,this.x,this.y+this.size);
+ ctx.bezierCurveTo(this.x-this.size,this.y+this.size/3,this.x-this.size/2,this.y-this.size/2,this.x,this.y);
+ ctx.fill();ctx.globalAlpha=1;
+}
+Heart.prototype.update=function(){
+ this.y+=this.speedY;
+ if(this.y>canvas.height){this.y=-this.size;this.x=Math.random()*canvas.width;}
+ this.draw();
+}
+function animate(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ if(hearts.length<30)hearts.push(new Heart());
+ hearts.forEach(h=>h.update());
+ requestAnimationFrame(animate);
+}
+animate();
+addEventListener("resize",()=>{canvas.width=innerWidth;canvas.height=innerHeight;});
+</script>
+</body>
+</html>
